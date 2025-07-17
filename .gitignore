@@ -53,3 +53,35 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+*.log
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# NuGet packages
+*.nupkg
+.nuget/
+
+# Rider files
+.idea/
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Build output and auto-generated files for .NET projects
+LocationRegionMatcher/bin/
+LocationRegionMatcher/obj/
