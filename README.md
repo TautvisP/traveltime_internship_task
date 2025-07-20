@@ -1,94 +1,96 @@
-# internship-task
+# TravelTime Internship Task - Location to Region Matcher
 
-This is a test assignment for Scala TravelTime internship.
+## Overview
 
-For this test task your goal is to match locations to their appropriate regions.
+This application matches locations to their corresponding regions based on geographic coordinates.  
+Locations and regions are provided as JSON files. Each region can have multiple polygons, and each location can belong to multiple regions.  
+The result is a JSON file listing all regions with their matched locations.
 
-- Location - coordinates of a point. Each location has a name.
-- Region - a set of coordinates describing a polygon. Each polygon has a name.
+## Design Choices
 
-You have to find which locations are within the given regions. 
-A single region can contain multiple locations. A single location can appear in multiple regions, thus meaning regions can overlap with each other.
-Locations and regions are provided in separate JSON files. You will have to parse these files to read locations and regions data. 
+- **Separation of Concerns:** The codebase is split into multiple files:
+    - `Location.cs` and `Region.cs` for data models.
+    - `Validator.cs` for input validation.
+    - `PolygonUtils.cs` for geometric algorithms (ray casting).
+    - `RegionMatcher.cs` for matching logic.
+    - `Program.cs` for application entry point and I/O.
+- **Streaming Deserialization:** Uses System.Text.Json's streaming API to efficiently process large input files without loading them entirely into memory.
+- **Functional Patterns:** LINQ is used for concise, readable, and functional-style data processing.
+- **Validation:** All input data is validated for structure, uniqueness, and correctness. Invalid data results in clear exceptions.
+- **Extensibility:** The modular structure allows for easy extension, testing, and maintenance.
 
-After you successfully parsed JSON files you will need to create an algorithm or use third party library that matches locations to their regions based on their coordinates.
-The result of your task should be a JSON file which list all of the regions with their coresponding locations.
+## Input & Output
 
+### Input files
 
-**Reminder**:
+- **Locations** (`input/locations.json`):
 
-One region can contain multiple polygons. To display coordinates of provided regions on a map, you can use this website https://geojson.io/. 
-
-### Input files:
-
-[Locations](input/locations.json):
-```js
-[
-  {
-    "name": "<unique identifier>",
-    "coordinates": [<longitude>, <latitude>]
-  },
-  ... // more locations
-]
-```
-
-[Regions](input/regions.json):
-```js
-[
-  {
-    "name": "<unique identifier>",
-    "coordinates": [
-      [[<longitude>, <latitude>], [<longitude>, <latitude>]], 
-        ... // more polygons    
-    ] - array of polygons, where each polygon is an array of coordinates.
-  },
-  ... // more regions
-]
-```
-
-### Output files:
-
-[Results](output/results.json):
-```js
-[
-  {
-    "region": "<region identifier>",
-    "matched_locations": [
-      "<location identifier>",
-      "<location identifier>",
+    ```json
+    [
+      {
+        "name": "<unique identifier>",
+        "coordinates": [<longitude>, <latitude>]
+      }
+      // ... more locations
     ]
-  },
-  ... // more regions
-]
-```
+    ```
 
+- **Regions** (`input/regions.json`):
 
-### Main requirements:
-* Any statically typed programming language can be used for this task
-* Try to implement the solution as if it was a real production level application, not just a minimal script
-* Submit your solution that we could access, you should do it via a GitHub repository
-* Cover all edge cases and make sure that your solution works correctly
-* Create a README which describes how to run your program in the terminal. Pass region and location files as input parameters. Example: **scala your-app --regions=regions.json --locations=locations.json --output=results.json**
-* Cover your solution with unit tests (including all edge cases)
+    ```json
+    [
+      {
+        "name": "<unique identifier>",
+        "coordinates": [
+          [[<longitude>, <latitude>], [<longitude>, <latitude>], ...]
+          // ... more polygons
+        ]
+      }
+      // ... more regions
+    ]
+    ```
 
+### Output file
 
-### Optional requirements:
-* Implement it in `Scala`
-* Make your app run with `Docker`
-* If you are not using Scala, see if your language supports any functional patterns and try to use them.
-  Even non-FP languages often have FP patterns (`LINQ` in `C#`, `Streams` in `Java`...)
-* Implement the algorithm which will match the location with the corresponding region
+- **Results** (`output/results.json`):
 
-### Usage of AI for the solution
+    ```json
+    [
+      {
+        "region": "<region identifier>",
+        "matched_locations": [
+          "<location identifier>",
+          "<location identifier>"
+        ]
+      }
+      // ... more regions
+    ]
+    ```
 
-We strongly urge you to try to complete the task without relying on AI. The task is not overly complex,
-so an LLM will not struggle too much to solve it, but that is not the point. The purpose of this task
-is to show us your current skill level, your ability to find and solve problems and most importantly -
-explain the decisions and design choices you made along the way. A less fleshed out solution
-that you understand and can explain is way more valuable to us than a vibe coded one.
+## How to Run
 
-Even if your first submission is lacking, as long as we see that you are moving in the right direction,
-we will provide some feedback and let you improve it.
+1. **Build the project:**
+    ```sh
+    dotnet build
+    ```
 
-Usage of AI is generally okay for simple purposes, such as tool discovery (example could be asking what
-JSON parsing libraries exist in your language of choice) and other similar purposes. Just don't vibe code :)
+2. **Run the matcher with input and output file paths:**
+    ```sh
+    dotnet run --project LocationRegionMatcher/LocationRegionMatcher.csproj LocationRegionMatcher/input/regions.json LocationRegionMatcher/input/locations.json LocationRegionMatcher/output/results.json
+    ```
+
+3. The output will be written to the specified results file.
+
+## Notes
+
+- Input files must be in the format described above.
+- The application is robust against malformed input and large files.
+- All edge cases (duplicate names, degenerate polygons, etc.) are handled and reported.
+
+## Testing
+
+Unit tests are provided in the `LocationRegionMatcher.Tests` project.  
+To run all tests:
+
+```sh
+dotnet test

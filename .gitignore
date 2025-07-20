@@ -62,6 +62,8 @@ x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 *.log
+**/bin/
+**/obj/
 
 # Visual Studio files
 .vs/
@@ -72,6 +74,12 @@ x86/
 # NuGet packages
 *.nupkg
 .nuget/
+*.snupkg
+project.assets.json
+project.nuget.cache
+*.nuget.dgspec.json
+*.nuget.g.props
+*.nuget.g.targets
 
 # Rider files
 .idea/
