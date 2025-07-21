@@ -94,3 +94,21 @@ To run all tests:
 
 ```sh
 dotnet test
+```
+
+## Running in Docker
+
+1. **Build the Docker image:**
+    ```sh
+    docker build -t location-region-matcher .
+    ```
+
+2. **Run the matcher:**
+    ```sh
+    docker run --rm -v "$PWD/LocationRegionMatcher/input:/app/input" -v "$PWD/LocationRegionMatcher/output:/app/output" location-region-matcher /app/input/regions.json /app/input/locations.json /app/output/results.json
+    ```
+
+- This mounts your local `input` and `output` folders into the container for file access.
+- The output will be written to `LocationRegionMatcher/output/results.json` on your host.
+
+---
