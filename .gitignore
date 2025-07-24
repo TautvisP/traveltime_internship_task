@@ -93,3 +93,7 @@ TestResults/
 # Build output and auto-generated files for .NET projects
 LocationRegionMatcher/bin/
 LocationRegionMatcher/obj/
+
+# Data files
+LocationRegionMatcher/input/
+LocationRegionMatcher/output/

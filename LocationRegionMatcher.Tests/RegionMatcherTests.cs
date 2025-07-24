@@ -31,7 +31,7 @@ public class RegionMatcherTests
         };
         var result = RegionMatcher.MatchLocationsToRegions(locations, regions);
         var matched = result.First();
-        Assert.Contains("A", matched.matched_locations);
-        Assert.DoesNotContain("B", matched.matched_locations);
+        Assert.Contains("A", matched.matchedLocations);
+        Assert.DoesNotContain("B", matched.matchedLocations);
     }
 }
