@@ -48,4 +48,25 @@ public class ValidatorTests
         });
         Assert.Throws<InvalidDataException>(() => Validator.ValidateRegion(region, nameSet));
     }
+
+    /// <summary>
+    /// Ensures that a polygon that is not closed (first and last point differ) throws an InvalidDataException.
+    /// </summary>
+    [Fact]
+    public void PolygonNotClosed_Throws()
+    {
+        var nameSet = new HashSet<string>();
+        var region = new Region("R", new List<List<double[]>>
+        {
+            new List<double[]>
+            {
+                new[] { 0.0, 0.0 },
+                new[] { 0.0, 1.0 },
+                new[] { 1.0, 1.0 },
+                new[] { 1.0, 0.0 }
+                // Missing closing point [0.0, 0.0]
+            }
+        });
+        Assert.Throws<InvalidDataException>(() => Validator.ValidateRegion(region, nameSet));
+    }
 }

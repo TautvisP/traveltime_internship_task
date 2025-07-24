@@ -5,6 +5,8 @@ namespace LocationRegionMatcher
         /// <summary>
         /// Validates a location object.
         /// Checks for a valid name, uniqueness, and valid coordinates.
+        /// Coordinates must be an array of two doubles: [longitude, latitude],
+        /// where longitude is in [-180, 180] and latitude is in [-90, 90].
         /// Throws exceptions for invalid locations.
         /// </summary>
         /// <param name="loc">Location object to validate.</param>
@@ -15,6 +17,11 @@ namespace LocationRegionMatcher
                 throw new InvalidDataException("Location name missing.");
             if (loc.Coordinates == null || loc.Coordinates.Length != 2)
                 throw new InvalidDataException($"Location '{loc.Name}' has invalid coordinates.");
+
+            double longitude = loc.Coordinates[0];
+            double latitude = loc.Coordinates[1];
+            if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90)
+                throw new InvalidDataException($"Location '{loc.Name}' has out-of-range coordinates: [{longitude}, {latitude}].");
             if (!nameSet.Add(loc.Name))
                 throw new InvalidDataException($"Duplicate location name: {loc.Name}");
         }
@@ -43,7 +50,8 @@ namespace LocationRegionMatcher
         /// Validates a polygon for a region.
         /// Ensures the polygon has at least 3 points, all coordinates are valid,
         /// and warns if the polygon is not closed (first and last point differ).
-        /// Throws exceptions for invalid polygons.
+        /// Coordinates must be [longitude, latitude] with longitude in [-180, 180] and latitude in [-90, 90].
+        /// Throws exceptions for invalid polygons or coordinates.
         /// </summary>
         /// <param name="regionName">Name of the region containing the polygon.</param>
         /// <param name="poly">List of coordinates representing the polygon.</param>
@@ -55,9 +63,14 @@ namespace LocationRegionMatcher
             {
                 if (coord == null || coord.Length != 2)
                     throw new InvalidDataException($"Region '{regionName}' has invalid coordinate in polygon.");
+
+                double longitude = coord[0];
+                double latitude = coord[1];
+                if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90)
+                    throw new InvalidDataException($"Region '{regionName}' has out-of-range coordinate in polygon: [{longitude}, {latitude}].");
             }
             if (!poly.First().SequenceEqual(poly.Last()))
-                Console.Error.WriteLine($"Warning: Polygon in region '{regionName}' is not closed (first and last point differ).");
+                throw new InvalidDataException($"Region '{regionName}' has an unclosed polygon (first and last point differ).");
         }
     }
 }
