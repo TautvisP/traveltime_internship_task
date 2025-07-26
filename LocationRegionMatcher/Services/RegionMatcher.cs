@@ -7,7 +7,7 @@ namespace LocationRegionMatcher
     public class RegionMatchResult
     {
         public string region { get; set; } = string.Empty;
-        public List<string> matched_locations { get; set; } = new();
+        public List<string> matchedLocations { get; set; } = new();
     }
 
     public static class RegionMatcher
@@ -24,8 +24,8 @@ namespace LocationRegionMatcher
             return regions.Select(region => new RegionMatchResult
             {
                 region = region.Name,
-                matched_locations = locations
-                    .Where(loc => region.Coordinates.Any(poly => PolygonUtils.IsPointInPolygon(loc.Coordinates, poly)))
+                matchedLocations = locations
+                    .Where(loc => region.Polygons.Any(poly => PolygonUtils.IsPointInPolygon(loc.Coordinates, poly)))
                     .Select(loc => loc.Name)
                     .ToList()
             }).ToList();

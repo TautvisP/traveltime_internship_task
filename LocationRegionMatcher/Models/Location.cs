@@ -3,10 +3,10 @@ using System.Text.Json.Serialization;
 namespace LocationRegionMatcher
 {
     /// <summary>
-    /// Represents a region with a name and a list of polygons.
+    /// Represents a location with a name and coordinates.
     /// </summary>
-    public record Region(
+    public record Location(
         [property: JsonPropertyName("name")] string Name,
-        [property: JsonPropertyName("coordinates")] List<List<double[]>> Coordinates
+        [property: JsonPropertyName("coordinates")] Coordinate Coordinates
     );
 }

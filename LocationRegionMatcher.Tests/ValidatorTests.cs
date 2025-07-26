@@ -9,7 +9,7 @@ public class ValidatorTests
     public void DuplicateLocationName_Throws()
     {
         var nameSet = new HashSet<string> { "A" };
-        var loc = new Location("A", new[] { 0.0, 0.0 });
+        var loc = new Location("A", new Coordinate(0.0, 0.0));
         Assert.Throws<InvalidDataException>(() => Validator.ValidateLocation(loc, nameSet));
     }
 
@@ -20,7 +20,8 @@ public class ValidatorTests
     public void InvalidCoordinates_Throws()
     {
         var nameSet = new HashSet<string>();
-        var loc = new Location("B", new[] { 0.0 });
+        // Invalid: null coordinates
+        var loc = new Location("B", null!);
         Assert.Throws<InvalidDataException>(() => Validator.ValidateLocation(loc, nameSet));
     }
 
@@ -31,7 +32,7 @@ public class ValidatorTests
     public void RegionWithNoPolygons_Throws()
     {
         var nameSet = new HashSet<string>();
-        var region = new Region("R", new List<List<double[]>>());
+        var region = new Region("R", new List<Polygon>());
         Assert.Throws<InvalidDataException>(() => Validator.ValidateRegion(region, nameSet));
     }
 
@@ -42,10 +43,32 @@ public class ValidatorTests
     public void PolygonWithInvalidCoordinate_Throws()
     {
         var nameSet = new HashSet<string>();
-        var region = new Region("R", new List<List<double[]>>
+        var poly = new Polygon
         {
-            new List<double[]> { new[] { 0.0, 0.0 }, null, new[] { 1.0, 1.0 } }
-        });
+            new Coordinate(0.0, 0.0),
+            null!,
+            new Coordinate(1.0, 1.0)
+        };
+        var region = new Region("R", new List<Polygon> { poly });
+        Assert.Throws<InvalidDataException>(() => Validator.ValidateRegion(region, nameSet));
+    }
+
+    /// <summary>
+    /// Ensures that a polygon that is not closed (first and last point differ) throws an InvalidDataException.
+    /// </summary>
+    [Fact]
+    public void PolygonNotClosed_Throws()
+    {
+        var nameSet = new HashSet<string>();
+        var poly = new Polygon
+        {
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 1.0),
+            new Coordinate(1.0, 0.0)
+            // Missing closing point (should be new Coordinate(0.0, 0.0))
+        };
+        var region = new Region("R", new List<Polygon> { poly });
         Assert.Throws<InvalidDataException>(() => Validator.ValidateRegion(region, nameSet));
     }
 }

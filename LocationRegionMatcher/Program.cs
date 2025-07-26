@@ -1,9 +1,33 @@
 ﻿using System.Text.Json;
+using CommandLine;
 
 namespace LocationRegionMatcher
 {
     class Program
     {
+        // Register custom converters for Coordinate and Polygon
+        private static readonly JsonSerializerOptions options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters =
+            {
+                new CoordinateJsonConverter(),
+                new PolygonJsonConverter()
+            }
+        };
+
+        public class Options
+        {
+            [Value(0, MetaName = "regions", Required = true, HelpText = "Path to the regions JSON file.")]
+            public string Regions { get; set; } = "";
+
+            [Value(1, MetaName = "locations", Required = true, HelpText = "Path to the locations JSON file.")]
+            public string Locations { get; set; } = "";
+
+            [Value(2, MetaName = "output", Required = true, HelpText = "Path to the output JSON file.")]
+            public string Output { get; set; } = "";
+        }
+
         /// <summary>
         /// Parses a list of locations from a JSON file using streaming.
         /// Validates each location as it is read.
@@ -20,7 +44,7 @@ namespace LocationRegionMatcher
             var locations = new List<Location>();
 
             await using var stream = File.OpenRead(path);
-            await foreach (var loc in JsonSerializer.DeserializeAsyncEnumerable<Location>(stream))
+            await foreach (var loc in JsonSerializer.DeserializeAsyncEnumerable<Location>(stream, options))
             {
                 if (loc == null)
                     throw new InvalidDataException("Locations JSON is invalid.");
@@ -47,7 +71,7 @@ namespace LocationRegionMatcher
             var regions = new List<Region>();
 
             await using var stream = File.OpenRead(path);
-            await foreach (var region in JsonSerializer.DeserializeAsyncEnumerable<Region>(stream))
+            await foreach (var region in JsonSerializer.DeserializeAsyncEnumerable<Region>(stream, options))
             {
                 if (region == null)
                     throw new InvalidDataException("Regions JSON is invalid.");
@@ -65,28 +89,28 @@ namespace LocationRegionMatcher
         /// Handles and reports errors.
         /// </summary>
         /// <param name="args">Command-line arguments.</param>
-        static async Task Main(string[] args)
+        static async Task<int> Main(string[] args)
         {
-            if (args.Length != 3)
-            {
-                Console.WriteLine("Usage: dotnet run -- <regions.json> <locations.json> <results.json>");
-                return;
-            }
+            int exitCode = 0;
+            await Parser.Default.ParseArguments<Options>(args)
+                .WithParsedAsync(async opts =>
+                {
+                    try
+                    {
+                        var regionsList = await ParseRegionsAsync(opts.Regions);
+                        var locationsList = await ParseLocationsAsync(opts.Locations);
+                        List<RegionMatchResult> results = RegionMatcher.MatchLocationsToRegions(locationsList, regionsList);
 
-            try
-            {
-                var regions = await ParseRegionsAsync(args[0]);
-                var locations = await ParseLocationsAsync(args[1]);
-                List<RegionMatchResult> results = RegionMatcher.MatchLocationsToRegions(locations, regions);
-
-                File.WriteAllText(args[2], JsonSerializer.Serialize(results, new JsonSerializerOptions { WriteIndented = true }));
-                Console.WriteLine("Matching complete. Results written to " + args[2]);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine($"Error: {ex.Message}");
-                Environment.Exit(1);
-            }
+                        File.WriteAllText(opts.Output, JsonSerializer.Serialize(results, options));
+                        Console.WriteLine("Matching complete. Results written to " + opts.Output);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Error.WriteLine($"Error: {ex.Message}");
+                        exitCode = 1;
+                    }
+                });
+            return exitCode;
         }
     }
 }
