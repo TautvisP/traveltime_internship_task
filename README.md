@@ -19,6 +19,14 @@ The result is a JSON file listing all regions with their matched locations.
 - **Validation:** All input data is validated for structure, uniqueness, and correctness. Invalid data results in clear exceptions.
 - **Extensibility:** The modular structure allows for easy extension, testing, and maintenance.
 
+## Project Structure
+
+The project is organized into:
+- **Models** (`Coordinate`, `Polygon`, `Region`, `Location`) and their JSON converters.
+- **Services** (`Validator`, `PolygonUtils`, `RegionMatcher`) for validation, geometry, and matching logic.
+- **Program.cs** for the application entry point.
+- **Tests** for all core test logic.
+
 ## Input & Output
 
 ### Input files

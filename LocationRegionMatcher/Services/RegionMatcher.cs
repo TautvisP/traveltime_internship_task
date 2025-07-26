@@ -25,7 +25,7 @@ namespace LocationRegionMatcher
             {
                 region = region.Name,
                 matchedLocations = locations
-                    .Where(loc => region.Coordinates.Any(poly => PolygonUtils.IsPointInPolygon(loc.Coordinates, poly)))
+                    .Where(loc => region.Polygons.Any(poly => PolygonUtils.IsPointInPolygon(loc.Coordinates, poly)))
                     .Select(loc => loc.Name)
                     .ToList()
             }).ToList();

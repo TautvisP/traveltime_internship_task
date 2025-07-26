@@ -7,6 +7,6 @@ namespace LocationRegionMatcher
     /// </summary>
     public record Region(
         [property: JsonPropertyName("name")] string Name,
-        [property: JsonPropertyName("coordinates")] List<List<double[]>> Coordinates
+        [property: JsonPropertyName("coordinates")] List<Polygon> Polygons
     );
 }

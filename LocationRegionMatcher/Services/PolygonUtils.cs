@@ -6,24 +6,24 @@ namespace LocationRegionMatcher
         /// Determines if a point is inside a polygon using the ray casting algorithm.
         /// Returns true if the point is inside or exactly on the edge of the polygon.
         /// </summary>
-        /// <param name="point">Array of two doubles representing [longitude, latitude].</param>
-        /// <param name="polygon">List of coordinates representing the polygon.</param>
+        /// <param name="point">A Coordinate representing [longitude, latitude].</param>
+        /// <param name="polygon">A Polygon (list of Coordinate) representing the polygon.</param>
         /// <returns>True if the point is inside or on the edge, false otherwise.</returns>
-        public static bool IsPointInPolygon(double[] point, List<double[]> polygon)
+        public static bool IsPointInPolygon(Coordinate point, Polygon polygon)
         {
-            double pointLon = point[0];
-            double pointLat = point[1];
+            double pointLon = point.Longitude;
+            double pointLat = point.Latitude;
             int vertexCount = polygon.Count;
             int prev = vertexCount - 1;
             bool isInside = false;
 
             for (int curr = 0; curr < vertexCount; prev = curr++)
             {
-                double[] vertexA = polygon[curr];
-                double[] vertexB = polygon[prev];
+                var vertexA = polygon[curr];
+                var vertexB = polygon[prev];
 
-                double lonA = vertexA[0], latA = vertexA[1];
-                double lonB = vertexB[0], latB = vertexB[1];
+                double lonA = vertexA.Longitude, latA = vertexA.Latitude;
+                double lonB = vertexB.Longitude, latB = vertexB.Latitude;
 
                 // Check if the point matches either vertex exactly
                 if ((lonA == pointLon && latA == pointLat) ||

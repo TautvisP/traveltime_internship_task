@@ -8,15 +8,15 @@ public class PolygonUtilsTests
     [Fact]
     public void PointInsidePolygon_ReturnsTrue()
     {
-        var polygon = new List<double[]>
+        var polygon = new Polygon
         {
-            new[] {0.0, 0.0},
-            new[] {0.0, 1.0},
-            new[] {1.0, 1.0},
-            new[] {1.0, 0.0},
-            new[] {0.0, 0.0}
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 1.0),
+            new Coordinate(1.0, 0.0),
+            new Coordinate(0.0, 0.0)
         };
-        var point = new[] {0.5, 0.5};
+        var point = new Coordinate(0.5, 0.5);
         Assert.True(PolygonUtils.IsPointInPolygon(point, polygon));
     }
 
@@ -26,15 +26,15 @@ public class PolygonUtilsTests
     [Fact]
     public void PointOutsidePolygon_ReturnsFalse()
     {
-        var polygon = new List<double[]>
+        var polygon = new Polygon
         {
-            new[] {0.0, 0.0},
-            new[] {0.0, 1.0},
-            new[] {1.0, 1.0},
-            new[] {1.0, 0.0},
-            new[] {0.0, 0.0}
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 1.0),
+            new Coordinate(1.0, 0.0),
+            new Coordinate(0.0, 0.0)
         };
-        var point = new[] {1.5, 0.5};
+        var point = new Coordinate(1.5, 0.5);
         Assert.False(PolygonUtils.IsPointInPolygon(point, polygon));
     }
 
@@ -44,15 +44,15 @@ public class PolygonUtilsTests
     [Fact]
     public void PointOnVertex_ReturnsTrue()
     {
-        var polygon = new List<double[]>
+        var polygon = new Polygon
         {
-            new[] {0.0, 0.0},
-            new[] {0.0, 1.0},
-            new[] {1.0, 1.0},
-            new[] {1.0, 0.0},
-            new[] {0.0, 0.0}
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 1.0),
+            new Coordinate(1.0, 0.0),
+            new Coordinate(0.0, 0.0)
         };
-        var point = new[] {0.0, 0.0};
+        var point = new Coordinate(0.0, 0.0);
         Assert.True(PolygonUtils.IsPointInPolygon(point, polygon));
     }
 
@@ -62,15 +62,15 @@ public class PolygonUtilsTests
     [Fact]
     public void PointOnEdge_ReturnsTrue()
     {
-        var polygon = new List<double[]>
+        var polygon = new Polygon
         {
-            new[] {0.0, 0.0},
-            new[] {0.0, 1.0},
-            new[] {1.0, 1.0},
-            new[] {1.0, 0.0},
-            new[] {0.0, 0.0}
+            new Coordinate(0.0, 0.0),
+            new Coordinate(0.0, 1.0),
+            new Coordinate(1.0, 1.0),
+            new Coordinate(1.0, 0.0),
+            new Coordinate(0.0, 0.0)
         };
-        var point = new[] {0.5, 0.0};
+        var point = new Coordinate(0.5, 0.0);
         Assert.True(PolygonUtils.IsPointInPolygon(point, polygon));
     }
 }
